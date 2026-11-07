@@ -1,5 +1,4 @@
 use eframe::egui;
-use std::env;
 use std::process::Command;
 
 fn main() -> eframe::Result {
@@ -19,7 +18,7 @@ struct ShellApp {
 
 impl ShellApp {
   fn run_cmd(&mut self, line: &str) {
-    // self.output.push(format!("$ {line}"));
+    self.output.push(format!("> {line}"));
 
     let parts: Vec<&str> = line.split_whitespace().collect();
     let Some((cmd, args)) = parts.split_first() else {
@@ -51,7 +50,7 @@ impl ShellApp {
       Err(e) => self.output.push(format!("{cmd}: {e}")),
     }
     self.output.push(format!(
-      "-------------------------------------------------------------------------------------"
+      "---------------------------------------------------------------------------------"
     ));
   }
 }
@@ -75,7 +74,7 @@ impl eframe::App for ShellApp {
             })
             .expect("Failed to get current directory");
 
-          ui.label(egui::RichText::new(format!("{}$", pwd)).font(egui::FontId::monospace(16.0)));
+          ui.label(egui::RichText::new(format!("~{}$", pwd)).font(egui::FontId::monospace(14.0)));
           let text_edit = egui::TextEdit::singleline(&mut self.input)
             .desired_width(f32::INFINITY)
             .frame(false)
