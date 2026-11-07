@@ -74,7 +74,11 @@ impl eframe::App for ShellApp {
             })
             .expect("Failed to get current directory");
 
-          ui.label(egui::RichText::new(format!("~{}$", pwd)).font(egui::FontId::monospace(14.0)));
+          ui.label(
+            egui::RichText::new(format!("~{}$", pwd))
+              .font(egui::FontId::monospace(14.0))
+              .color(egui::Color32::GREEN),
+          );
           let text_edit = egui::TextEdit::singleline(&mut self.input)
             .desired_width(f32::INFINITY)
             .frame(false)
@@ -99,12 +103,14 @@ impl eframe::App for ShellApp {
         .show(ui, |ui| {
           egui::Frame::none().show(ui, |ui| {
             for line in &self.output {
-              let line = line.trim().to_string();
+              let clean = strip_ansi_escapes::strip(line);
+              let line = String::from_utf8_lossy(&clean);
+              let line = line.trim_end();
               if !line.is_empty() {
                 ui.label(
                   egui::RichText::new(line)
                     .font(egui::FontId::monospace(14.0))
-                    .color(egui::Color32::GREEN),
+                    .color(egui::Color32::WHITE),
                 );
               }
             }
